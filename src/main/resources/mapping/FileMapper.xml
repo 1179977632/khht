@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.khht.mapper.FileMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.khht.dto.entity.file.File">
+        <id column="file_id" jdbcType="INTEGER" property="fileId" />
+        <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+        <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+        <result column="file_size" jdbcType="BIGINT" property="fileSize" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <insert id="insertFile" parameterType="com.example.khht.dto.file.FileInputDTO">
+        INSERT INTO t_file (
+        file_name,
+        file_url,
+        file_size)
+        VALUES (
+        #{fileName,jdbcType=VARCHAR},
+        #{fileUrl,jdbcType=VARCHAR},
+        #{fileSize,jdbcType=BIGINT})
+    </insert>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM t_file
+    </select>
+
+    <select id="selectFileByFileId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM t_file WHERE t_file.file_id = #{fileId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectFileIdByFileUrl" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT t_file.file_id
+        FROM t_file
+        WHERE t_file.file_url = #{fileUrl,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

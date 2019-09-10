@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.khht.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.khht.dto.entity.user.User">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="user_email" jdbcType="CHAR" property="userEmail" />
+        <result column="user_password" jdbcType="CHAR" property="userPassword" />
+        <result column="user_name" jdbcType="CHAR" property="userName" />
+        <result column="file_id" jdbcType="INTEGER" property="fileId" />
+        <result column="user_sex" jdbcType="CHAR" property="userSex" />
+        <result column="user_age" jdbcType="INTEGER" property="userAge" />
+        <result column="school_name" jdbcType="CHAR" property="schoolName"/>
+        <result column="user_job" jdbcType="CHAR" property="userJob" />
+    </resultMap>
+
+    <insert id="insertUser" parameterType="com.example.khht.dto.user.UserRegisterInputDTO">
+        INSERT INTO t_user (
+            user_email,
+            user_password,
+            user_name,
+            user_sex,
+            user_age,
+            school_id,
+            user_job)
+        VALUES (
+            #{userEmail,jdbcType=CHAR},
+            #{userPassword,jdbcType=CHAR},
+            #{userName,jdbcType=CHAR},
+            #{userSex,jdbcType=CHAR},
+            #{userAge,jdbcType=INTEGER},
+            (SELECT school_id FROM t_school WHERE school_name = #{schoolName,jdbcType=CHAR}),
+            #{userJob,jdbcType=CHAR})
+    </insert>
+
+    <select id="selectUserByEmailAndPassword" parameterType="com.example.khht.dto.user.UserLoginInputDTO" resultType="com.example.khht.dto.user.UserLoginDTO">
+        SELECT
+            t_user.user_id,
+            t_user.user_email,
+            t_user.user_name,
+            t_user.file_id,
+            t_user.user_sex,
+            t_user.user_age,
+            t_user.school_id,
+            t_school.school_name,
+            t_user.user_job
+        FROM t_user INNER JOIN t_school ON t_user.school_id = t_school.school_id
+        WHERE
+            t_user.user_email = #{userEmail,jdbcType=CHAR}
+        AND
+            t_user.user_password  = #{userPassword,jdbcType=CHAR}
+    </select>
+
+    <select id="selectCountUserEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT Count(t_user.user_email)
+        FROM t_user
+        WHERE t_user.user_email = #{userEmail,jdbcType=CHAR}
+    </select>
+
+    <select id="selectCountUserName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT Count(t_user.user_name)
+        FROM t_user
+        WHERE t_user.user_name = #{userName,jdbcType=CHAR}
+    </select>
+
+    <select id="selectUserNameByUserId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT t_user.user_name
+        FROM t_user
+        WHERE t_user.user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateFileIdByUserId" parameterType="com.example.khht.dto.entity.user.User">
+        UPDATE t_user
+        SET t_user.file_id = #{fileId,jdbcType=INTEGER}
+        WHERE t_user.user_id = #{userId,jdbcType=INTEGER}
+    </update>
+</mapper>

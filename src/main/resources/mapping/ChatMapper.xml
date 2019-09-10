@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.khht.mapper.ChatMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.khht.dto.entity.chat.Chat">
+        <id column="chat_id" jdbcType="INTEGER" property="chatId" />
+        <result column="send_id" jdbcType="INTEGER" property="sendId" />
+        <result column="receive_id" jdbcType="INTEGER" property="receiveId" />
+        <result column="school_id" jdbcType="INTEGER" property="schoolId" />
+        <result column="course_id" jdbcType="INTEGER" property="courseId" />
+        <result column="chat_content" jdbcType="VARCHAR" property="chatContent" />
+        <result column="file_id" jdbcType="INTEGER" property="fileId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <insert id="insertChat" parameterType="com.example.khht.dto.chat.ChatReturnDTO">
+        INSERT INTO t_chat (
+        send_id,
+        receive_id,
+        school_id,
+        course_id,
+        chat_content,
+        file_id,
+        create_time)
+        VALUES (
+        #{sendId,jdbcType=INTEGER},
+        #{receiveId,jdbcType=INTEGER},
+        #{schoolId,jdbcType=INTEGER},
+        #{courseId,jdbcType=INTEGER},
+        #{chatContent,jdbcType=VARCHAR},
+        #{fileId,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM t_chat
+    </select>
+
+    <select id="selectChat" resultType="com.example.khht.dto.chat.ChatReturnDTO" parameterType="com.example.khht.dto.chat.ChatSelectInputDTO">
+        SELECT
+        t_chat.send_id,
+        t_user.user_name AS send_name,
+        t_chat.receive_id,
+        t_chat.school_id,
+        t_chat.course_id,
+        t_chat.chat_content,
+        t_chat.file_id,
+        t_chat.create_time
+        FROM
+        t_chat
+        INNER JOIN t_user ON t_chat.send_id = t_user.user_id
+        <where>
+                t_chat.chat_id = t_chat.chat_id
+            <if test="sendId != null">
+                AND t_chat.send_id = #{sendId,jdbcType=INTEGER}
+            </if>
+            <if test="receiveId != null">
+                AND t_chat.receive_id = #{receiveId,jdbcType=INTEGER}
+            </if>
+            <if test="schoolId != null">
+                AND t_chat.school_id = #{schoolId,jdbcType=INTEGER}
+            </if>
+            <if test="courseId != null">
+                AND t_chat.course_id = #{courseId,jdbcType=INTEGER}
+            </if>
+        </where>
+        ORDER BY t_chat.create_time ASC
+    </select>
+
+</mapper>

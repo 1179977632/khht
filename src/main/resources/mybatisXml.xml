@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.khht.mapper.UserMapper">
+
+    <!--&lt;!&ndash;column不做限制，可以为任意表的字段，而property须为type 定义的pojo属性&ndash;&gt;
+    <resultMap id="唯一的标识" type="映射的pojo对象">
+        <id column="表的主键字段，或者可以为查询语句中的别名字段" jdbcType="字段类型" property="映射pojo对象的主键属性" />
+        <result column="表的一个字段（可以为任意表的一个字段）" jdbcType="字段类型" property="映射到pojo对象的一个属性（须为type定义的pojo对象中的一个属性）"/>
+        <association property="pojo的一个对象属性" javaType="pojo关联的pojo对象">
+            <id column="关联pojo对象对应表的主键字段" jdbcType="字段类型" property="关联pojo对象的主席属性"/>
+            <result  column="任意表的字段" jdbcType="字段类型" property="关联pojo对象的属性"/>
+        </association>
+        &lt;!&ndash; 集合中的property须为oftype定义的pojo对象的属性&ndash;&gt;
+        <collection property="pojo的集合属性" ofType="集合中的pojo对象">
+            <id column="集合中pojo对象对应的表的主键字段" jdbcType="字段类型" property="集合中pojo对象的主键属性" />
+            <result column="可以为任意表的字段" jdbcType="字段类型" property="集合中的pojo对象的属性" />
+        </collection>
+    </resultMap>-->
+
+    <resultMap id="BaseResultMap" type="com.example.khht.dto.entity.user.User">
+        <id column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="user_email" jdbcType="CHAR" property="userEmail" />
+        <result column="user_password" jdbcType="CHAR" property="userPassword" />
+        <result column="user_name" jdbcType="CHAR" property="userName" />
+        <result column="user_sex" jdbcType="CHAR" property="userSex" />
+        <result column="user_age" jdbcType="INTEGER" property="userAge" />
+        <result column="school_name" jdbcType="CHAR" property="schoolName"/>
+        <result column="user_job" jdbcType="CHAR" property="userJob" />
+    </resultMap>
+
+    <insert id="insertUser" parameterType="BaseResultMap">
+        INSERT INTO t_user (
+        user_email,
+        user_password,
+        user_name,
+        user_sex,
+        user_age,
+        school_id,
+        user_job)
+        VALUES (
+        #{userEmail,jdbcType=CHAR},
+        #{userPassword,jdbcType=CHAR},
+        #{userName,jdbcType=CHAR},
+        #{userSex,jdbcType=CHAR},
+        #{userAge,jdbcType=INTEGER},
+        (SELECT school_id FROM t_school WHERE school_name = #{schoolName,jdbcType=CHAR}),
+        #{userJob,jdbcType=CHAR})
+    </insert>
+
+    <select id="selectByEmailAndPassword" parameterType="com.example.khht.dto.user.UserLoginInputDTO" resultMap="com.example.khht.dto.user.UserLoginDTO">
+        SELECT
+        t_user.user_id,
+        t_user.user_email,
+        t_user.user_name,
+        t_user.user_sex,
+        t_user.user_age,
+        t_school.school_name,
+        t_user.user_job
+        FROM t_user INNER JOIN t_school ON t_user.school_id = t_school.school_id
+        WHERE
+        t_user.user_email = #{userEmail,jdbcType=CHAR}
+        AND
+        t_user.user_password  = #{userPassword,jdbcType=CHAR}
+    </select>
+
+    <!--<select id="selectAll" resultMap="ListResultMap">
+        SELECT
+        oa_document_receive.id,
+        oa_document.title,
+        oa_document.document_file_id,
+        oa_document_receive.read_at,
+        ge_organization.`name` department,
+        oa_document.created_at release_at
+        FROM
+        oa_document_receive
+        INNER JOIN oa_document ON oa_document_receive.document_id = oa_document.id
+        INNER JOIN ge_organization ON oa_document.organization_id = ge_organization.id
+        <where>
+            <if test="userId!=NULL and organizationId!=NULL" >
+                oa_document_receive.user_id = #{userId,jdbcType=INTEGER}
+                AND oa_document_receive.organization_id = #{organizationId,jdbcType=INTEGER}
+            </if>
+            <if test="keyStatus=='未读'" >
+                AND oa_document_receive.read_at IS NULL
+            </if>
+            <if test="keyStatus=='已读'" >
+                AND oa_document_receive.read_at IS NOT NULL
+            </if>
+            <if test="keyWord!=NULL and keyWord.trim()!=''" >
+                AND (oa_document.title LIKE CONCAT('%', #{keyWord}, '%')
+                OR ge_organization.`name` LIKE CONCAT('%', #{keyWord}, '%'))
+            </if>
+        </where>
+        ORDER BY
+        oa_document_receive.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>-->
+
+</mapper>

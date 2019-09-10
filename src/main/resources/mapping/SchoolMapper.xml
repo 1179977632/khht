@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.khht.mapper.SchoolMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.khht.dto.entity.school.School">
+        <id column="school_id" jdbcType="INTEGER" property="schoolId" />
+        <result column="school_name" jdbcType="CHAR" property="schoolName" />
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM t_school
+    </select>
+
+</mapper>
